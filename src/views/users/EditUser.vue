@@ -176,7 +176,13 @@ export default {
     }
   },
   created() {
-    this.user = this.getUsersById(this.$route.params.userId);
+    const user = this.getUsersById(this.$route.params.userId);
+    if (user) {
+      this.user = user;
+    } else {
+      this.$alert("Utilizador não encontrado!", "Erro", "error");
+      router.push({ name: "listUsers" });
+    }
   }
 };
 </script>

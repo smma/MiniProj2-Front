@@ -72,7 +72,7 @@
                 v-model="animal.links[1].url"
                 type="url"
                 class="form-control form-control-lg"
-                id="txtPhoto"
+                id="txtVideo"
                 placeholder="escreve link para vídeo"
               />
             </div>
@@ -131,7 +131,11 @@ export default {
   },
   methods: {
     removeComments() {
-      this.animal.comments.length = 0;
+      if (!this.animal.comments || !Array.isArray(this.animal.comments)) {
+        this.animal.comments = [];
+      } else {
+        this.animal.comments.length = 0;
+      }
       this.$alert(
         "Comentários removidos, clique em atualizar!",
         "Comentários!",
@@ -151,7 +155,24 @@ export default {
     }
   },
   created() {
-    this.animal = this.getAnimalsById(this.$route.params.animalId);
+    const animal = this.getAnimalsById(this.$route.params.animalId);
+    if (animal) {
+      // Ensure links array exists and has at least 3 elements
+      if (!animal.links || !Array.isArray(animal.links)) {
+        animal.links = [];
+      }
+      while (animal.links.length < 3) {
+        animal.links.push({ url: "" });
+      }
+      // Ensure comments array exists
+      if (!animal.comments || !Array.isArray(animal.comments)) {
+        animal.comments = [];
+      }
+      this.animal = animal;
+    } else {
+      this.$alert("Animal não encontrado!", "Erro", "error");
+      router.push({ name: "listAnimals" });
+    }
   }
 };
 </script>

@@ -121,6 +121,7 @@
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 import { EDIT_USER } from "@/store/users/user.constants";
+import router from "@/router";
 
 export default {
   name: "Animal",
@@ -153,10 +154,14 @@ export default {
     evaluate() {
       let i = 0;
       for (const question of this.quiz.questions) {
-        const id = question.answers.filter(answer => answer.correct === true)[0]
-          ._id;
-        if (id == this.answers[i]) {
-          this.correctAnswers += 1;
+        const correctAnswers = question.answers.filter(
+          answer => answer.correct === true
+        );
+        if (correctAnswers.length > 0) {
+          const id = correctAnswers[0]._id;
+          if (id == this.answers[i]) {
+            this.correctAnswers += 1;
+          }
         }
         i++;
       }
@@ -182,11 +187,17 @@ export default {
   },
   created() {
     this.quiz = this.getQuizById(this.$route.params.quizId);
-    let x = setInterval(function() {
-      this.seconds -= 1;
-      if (this.seconds < 0) {
+    if (!this.quiz) {
+      this.$alert("Quiz não encontrado!", "Erro", "error");
+      router.push({ name: "quizzes" });
+      return;
+    }
+    const self = this;
+    let x = setInterval(() => {
+      self.seconds -= 1;
+      if (self.seconds < 0) {
         clearInterval(x);
-        this.seconds = "EXPIRED";
+        self.seconds = "EXPIRED";
       }
     }, 1000);
   }

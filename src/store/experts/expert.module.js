@@ -28,7 +28,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       expertService.getExperts(rootState.auth.token).then(
         res => {
-          commit(SET_EXPERTS, res.body);
+          const experts = res.body || res;
+          commit(SET_EXPERTS, Array.isArray(experts) ? experts : []);
           resolve(res);
         },
         err => {

@@ -90,7 +90,13 @@ export default {
     }
   },
   created() {
-    this.sponsor = this.getSponsorById(this.$route.params.sponsorId);
+    const sponsor = this.getSponsorById(this.$route.params.sponsorId);
+    if (sponsor) {
+      this.sponsor = sponsor;
+    } else {
+      this.$alert("Patrocinador não encontrado!", "Erro", "error");
+      router.push({ name: "listSponsors" });
+    }
   }
 };
 </script>

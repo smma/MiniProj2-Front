@@ -132,14 +132,25 @@ export default {
 
     viewAnimal(id) {
       const animal = this.animals.find(animal => animal._id === id);
+      if (!animal) {
+        this.$alert("Animal não encontrado!", "Erro", "error");
+        return;
+      }
+
+      const imageUrl =
+        animal.links && animal.links.length > 0 && animal.links[0].url
+          ? animal.links[0].url
+          : null;
 
       this.$fire({
         title: animal.name,
         html: this.generateTemplate(animal),
-        imageUrl: animal.links[0].url,
-        imageWidth: 400,
-        imageHeight: 200,
-        imageAlt: "Imagem desconhecida"
+        ...(imageUrl && {
+          imageUrl: imageUrl,
+          imageWidth: 400,
+          imageHeight: 200,
+          imageAlt: "Imagem desconhecida"
+        })
       });
     },
 

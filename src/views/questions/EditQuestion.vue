@@ -162,7 +162,13 @@ export default {
     }
   },
   created() {
-    this.question = this.getQuestionById(this.$route.params.questionId);
+    const question = this.getQuestionById(this.$route.params.questionId);
+    if (question) {
+      this.question = question;
+    } else {
+      this.$alert("Questão não encontrada!", "Erro", "error");
+      router.push({ name: "listQuestions" });
+    }
   }
 };
 </script>

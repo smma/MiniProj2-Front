@@ -159,15 +159,21 @@ export default {
     }
   },
   created() {
-    this.quiz = this.getQuizById(this.$route.params.quizId);
-    this.$store.dispatch(`question/${FETCH_QUESTIONS}`).then(
-      () => {
-        this.myQuestions = this.getQuestions;
-      },
-      err => {
-        this.$alert(`${err.message}`, "Erro", "error");
-      }
-    );
+    const quiz = this.getQuizById(this.$route.params.quizId);
+    if (quiz) {
+      this.quiz = quiz;
+      this.$store.dispatch(`question/${FETCH_QUESTIONS}`).then(
+        () => {
+          this.myQuestions = this.getQuestions;
+        },
+        err => {
+          this.$alert(`${err.message}`, "Erro", "error");
+        }
+      );
+    } else {
+      this.$alert("Quiz não encontrado!", "Erro", "error");
+      router.push({ name: "listQuizzes" });
+    }
   }
 };
 </script>

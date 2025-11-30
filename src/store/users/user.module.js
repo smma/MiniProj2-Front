@@ -18,7 +18,7 @@ const getters = {
   getUsersById: state => id => state.users.find(user => user._id === id),
   getNameById: state => id => {
     const user = state.users.find(user => user._id === id);
-    return user.name;
+    return user ? user.name : "";
   },
   getMessage: state => state.message
 };

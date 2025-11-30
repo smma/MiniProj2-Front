@@ -8,14 +8,29 @@
             <b-row>
               <b-col md="6" align="center">
                 <b-card-img
-                  :src="animal.links[0].url"
+                  :src="
+                    photoLinks[currentImageIndex]
+                      ? photoLinks[currentImageIndex].url
+                      : ''
+                  "
                   class="rounded-0 mb-2"
                 ></b-card-img>
                 <br />
-                <b-button variant="danger" class="mr-2" @click="setComment()">
+                <b-button
+                  variant="danger"
+                  class="mr-2"
+                  @click="previousImage()"
+                  :disabled="photoLinks.length <= 1"
+                >
                   <i class="fas fa-arrow-alt-circle-left"></i> </b-button
-                >&nbsp;1 de 3&nbsp;
-                <b-button variant="danger" class="mr-2" @click="setComment()">
+                >&nbsp;{{ currentImageIndex + 1 }} de
+                {{ photoLinks.length }}&nbsp;
+                <b-button
+                  variant="danger"
+                  class="mr-2"
+                  @click="nextImage()"
+                  :disabled="photoLinks.length <= 1"
+                >
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </b-button>
               </b-col>
@@ -27,13 +42,13 @@
                     {{ animal.level }}
                     <!-- Evaluation -->
                     <i class="fas fa-star fa-lg ml-2"></i>
-                    {{ animal.evaluation.length }}
+                    {{ (animal.evaluation || []).length }}
                     <!-- Comments -->
                     <i
                       class="fas fa-comment fa-lg ml-2"
                       @click="showComments()"
                     ></i>
-                    {{ animal.comments.length }}
+                    {{ (animal.comments || []).length }}
                     <!-- Ranking -->
                     <i class="fas fa-clipboard-list fa-lg ml-2"></i>
                     3
@@ -50,7 +65,7 @@
                       v-for="comment in this.animal.comments"
                       :key="comment._id"
                     >
-                      <b>{{ comment.user.name }}</b>
+                      <b>{{ getNameById(comment.user) }}</b>
                       ({{ setCurrentDateTime(comment.date) }})
                       <br />
                       {{ comment.body }}
@@ -80,6 +95,7 @@
                         variant="outline-success"
                         class="mr-2"
                         @click="showVideo(animal.links[1].url)"
+                        :hidden="!animal.links[1].url"
                       >
                         <i class="fas fa-video"></i> VER VÍDEO
                       </b-button>
@@ -109,6 +125,7 @@
 import HeaderPage from "@/components/HeaderPage.vue";
 import { EDIT_ANIMAL } from "@/store/animals/animal.constants";
 import { mapGetters } from "vuex";
+import router from "@/router";
 export default {
   name: "Animal",
   components: {
@@ -117,16 +134,40 @@ export default {
   data: function() {
     return {
       animal: "",
-      comment: ""
+      comment: "",
+      currentImageIndex: 0
     };
   },
   computed: {
     ...mapGetters("animal", ["getAnimalsById", "getMessage"]),
     ...mapGetters("auth", ["getProfile"]),
-    ...mapGetters("user", ["getUsersById", "getNameById"]),
-    ...mapGetters(["getUserLevelByPoints"])
+    ...mapGetters("user", ["getNameById"]),
+    ...mapGetters(["getUserLevelByPoints"]),
+    photoLinks() {
+      if (
+        !this.animal ||
+        !this.animal.links ||
+        !Array.isArray(this.animal.links)
+      ) {
+        return [];
+      }
+      return this.animal.links.filter(link => link.types === "photo");
+    }
   },
   methods: {
+    previousImage() {
+      if (this.photoLinks && this.photoLinks.length > 0) {
+        this.currentImageIndex =
+          (this.currentImageIndex - 1 + this.photoLinks.length) %
+          this.photoLinks.length;
+      }
+    },
+    nextImage() {
+      if (this.photoLinks && this.photoLinks.length > 0) {
+        this.currentImageIndex =
+          (this.currentImageIndex + 1) % this.photoLinks.length;
+      }
+    },
     showVideo(videoUrl) {
       this.$fire({
         title: "<strong>Vídeo</strong>",
@@ -157,7 +198,7 @@ export default {
         <b-alert show variant="secondary">
           
           
-          <b>${comment.user.name}</b> (${comment.date})<br>
+          <b>${comment.user ? comment.user.name : ""}</b> (${comment.date})<br>
           ${comment.body}  
         </b-alert>
         <br><br>
@@ -166,6 +207,16 @@ export default {
       return comments;
     },
     setComment() {
+      // Validate that comment is not empty
+      if (!this.comment || this.comment.trim() === "") {
+        this.$alert(
+          "Por favor, escreva um comentário antes de submeter!",
+          "Aviso",
+          "warning"
+        );
+        return;
+      }
+
       this.animal.comments.push({
         body: this.comment,
         user: this.getProfile._id,
@@ -174,6 +225,7 @@ export default {
       this.$store.dispatch(`animal/${EDIT_ANIMAL}`, this.animal).then(
         () => {
           this.$alert(`Obrigado pelo comentário!`, "Comentários", "success");
+          this.comment = ""; // Clear the comment field after successful submission
         },
         err => {
           this.$alert(`${err.message}`, "Erro", "error");
@@ -182,25 +234,39 @@ export default {
     },
     getCurrentDateTime() {
       const today = new Date();
-      const date =
-        today.getFullYear() +
-        "-" +
-        (today.getMonth() + 1) +
-        "-" +
-        today.getDay();
-      const time = today.getHours() + ":" + today.getMinutes();
-      return `${date} ${time}`;
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      const hours = String(today.getHours()).padStart(2, "0");
+      const minutes = String(today.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
     },
     setCurrentDateTime(commentDate) {
       const date = new Date(commentDate);
-      const formatDate =
-        date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
-      const formatTime = date.getHours() + ":" + date.getMinutes();
-      return `${formatDate} ${formatTime}`;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
     }
   },
   created() {
-    this.animal = this.getAnimalsById(this.$route.params.animalId);
+    const animal = this.getAnimalsById(this.$route.params.animalId);
+    if (animal) {
+      this.animal = animal;
+      // Initialize currentImageIndex to 0 (first photo)
+      this.currentImageIndex = 0;
+      // Reset index if it's out of bounds for photo links
+      this.$nextTick(() => {
+        if (this.currentImageIndex >= this.photoLinks.length) {
+          this.currentImageIndex = 0;
+        }
+      });
+    } else {
+      this.$alert("Animal não encontrado!", "Erro", "error");
+      router.push({ name: "animals" });
+    }
   }
 };
 </script>

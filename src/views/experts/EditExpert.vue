@@ -1,7 +1,7 @@
 <template>
   <section class="page-section">
     <b-container>
-      <HeaderPage title="Editar Patrocinador" />
+      <HeaderPage title="Editar Especialista" />
 
       <!--FORM-->
       <b-row>
@@ -14,7 +14,7 @@
                 type="text"
                 class="form-control"
                 id="txtName"
-                placeholder="Escreve o nome do patrocinador"
+                placeholder="Escreve o nome do especialista"
                 required
               />
             </div>
@@ -23,8 +23,8 @@
                 v-model="expert.profession"
                 type="text"
                 class="form-control"
-                id="txtLevel"
-                placeholder="Indica o nível do patrocinador"
+                id="txtProfession"
+                placeholder="Indica a profissão do especialista"
                 required
               />
             </div>
@@ -34,8 +34,8 @@
                 type="number"
                 min="1"
                 class="form-control"
-                id="numContributions"
-                placeholder="Indica o valor das contribuições"
+                id="numYears"
+                placeholder="Indica os anos de experiência"
                 required
               />
             </div>
@@ -90,7 +90,13 @@ export default {
     }
   },
   created() {
-    this.expert = this.getExpertById(this.$route.params.expertId);
+    const expert = this.getExpertById(this.$route.params.expertId);
+    if (expert) {
+      this.expert = expert;
+    } else {
+      this.$alert("Especialista não encontrado!", "Erro", "error");
+      router.push({ name: "listExperts" });
+    }
   }
 };
 </script>
