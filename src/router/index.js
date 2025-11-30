@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from "@/store";
 
 Vue.use(VueRouter);
 
@@ -158,6 +159,27 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes
+});
+
+// Navigation guard to protect admin routes
+router.beforeEach((to, from, next) => {
+  // Check if the route is an admin route (including all sub-routes)
+  if (to.path.startsWith("/admin")) {
+    // Check if user is logged in
+    const isLoggedIn = store.getters["auth/isUserLoggedIn"];
+    if (!isLoggedIn) {
+      // Redirect to login if not logged in
+      // Use replace: true to avoid history issues and ensure proper CSS rendering
+      next({
+        name: "login",
+        replace: true,
+        query: { redirect: to.fullPath }
+      });
+      return; // Prevent further navigation
+    }
+  }
+  // Allow access
+  next();
 });
 
 export default router;
