@@ -95,7 +95,6 @@
             >
               <i class="fas fa-plus-square"></i> ADICIONAR RESPOSTAS
             </button>
-            <!--<pre>{{ $data }}</pre>-->
             <button type="submit" class="btn btn-outline-success mr-2">
               <i class="fas fa-save"></i> GRAVAR QUESTÃO
             </button>
@@ -110,7 +109,6 @@
         <b-col cols="2"></b-col>
       </b-row>
     </b-container>
-    <pre>{{ $data }}</pre>
   </section>
 </template>
 
@@ -127,8 +125,6 @@ export default {
   },
   data: () => {
     return {
-      title: "",
-      group: "",
       type: "Escolha múltipla",
       question: "",
       description: "",
@@ -156,7 +152,7 @@ export default {
       return `insira a ${index}ª resposta`;
     },
     addAnswer() {
-      this.answers.push({ title: "", description: "", correct: false });
+      this.answers.push({ title: "", correct: false });
     },
     removeAnswer(index) {
       this.answers.splice(index, 1);

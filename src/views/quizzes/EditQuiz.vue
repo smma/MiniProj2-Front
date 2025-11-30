@@ -140,9 +140,6 @@ export default {
     }
   },
   methods: {
-    setPlaceHolder: index => {
-      return `insira a ${index}ª resposta`;
-    },
     addQuestion() {
       this.quiz.questions.push({ id: "" });
     },

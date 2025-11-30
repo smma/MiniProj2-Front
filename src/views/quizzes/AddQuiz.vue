@@ -93,7 +93,6 @@
             >
               <i class="fas fa-plus-square"></i> ADICIONAR QUESTÕES
             </button>
-            <!--<pre>{{ $data }}</pre>-->
             <button type="submit" class="btn btn-outline-success mr-2">
               <i class="fas fa-save"></i> GRAVAR QUIZ
             </button>
@@ -141,9 +140,6 @@ export default {
     }
   },
   methods: {
-    setPlaceHolder: index => {
-      return `insira a ${index}ª resposta`;
-    },
     addQuestion() {
       this.questions.push({ id: "" });
     },

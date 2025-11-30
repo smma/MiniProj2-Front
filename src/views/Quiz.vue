@@ -114,10 +114,6 @@
         <b-col cols="1"></b-col>
       </b-row>
     </b-container>
-    <pre>
-    {{ this.$data }}
-  </pre
-    >
   </section>
 </template>
 
