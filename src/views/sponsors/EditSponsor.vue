@@ -1,16 +1,16 @@
 <template>
   <section class="page-section">
     <b-container>
-      <HeaderPage title="Adicionar Patrocinador" />
+      <HeaderPage title="Editar Patrocinador" />
 
       <!--FORM-->
       <b-row>
         <b-col cols="2"></b-col>
         <b-col cols="8">
-          <form @submit.prevent="add">
+          <form @submit.prevent="update">
             <div class="form-group">
               <input
-                v-model="name"
+                v-model="sponsor.name"
                 type="text"
                 class="form-control"
                 id="txtName"
@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
               <input
-                v-model="level"
+                v-model="sponsor.level"
                 type="text"
                 class="form-control"
                 id="txtLevel"
@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
               <input
-                v-model="contributions"
+                v-model="sponsor.contributions"
                 type="number"
                 min="1"
                 class="form-control"
@@ -41,7 +41,7 @@
             </div>
 
             <button type="submit" class="btn btn-outline-success mr-2">
-              <i class="fas fa-save"></i> GRAVAR PATROCINADOR
+              <i class="fas fa-save"></i> ATUALIZAR
             </button>
             <router-link
               :to="{ name: 'listSponsors' }"
@@ -58,31 +58,29 @@
 </template>
 
 <script>
-import { ADD_SPONSOR } from "@/store/sponsors/sponsor.constants";
+import { EDIT_SPONSOR } from "@/store/sponsors/sponsor.constants";
 import router from "@/router";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "AddSponsor",
+  name: "EditSponsor",
   components: {
     HeaderPage
   },
   data: () => {
     return {
-      name: "",
-      level: "",
-      contributions: 0
+      sponsor: {}
     };
   },
   computed: {
-    ...mapGetters("sponsor", ["getMessage"])
+    ...mapGetters("sponsor", ["getSponsorById", "getMessage"])
   },
   methods: {
-    add() {
-      this.$store.dispatch(`sponsor/${ADD_SPONSOR}`, this.$data).then(
+    update() {
+      this.$store.dispatch(`sponsor/${EDIT_SPONSOR}`, this.$data.sponsor).then(
         () => {
-          this.$alert(this.getMessage, "Patrocinador adicionado!", "success");
+          this.$alert(this.getMessage, "Patrocinador atualizado!", "success");
           router.push({ name: "listSponsors" });
         },
         err => {
@@ -90,6 +88,9 @@ export default {
         }
       );
     }
+  },
+  created() {
+    this.sponsor = this.getSponsorById(this.$route.params.sponsorId);
   }
 };
 </script>

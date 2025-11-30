@@ -85,11 +85,21 @@ const routes = [
     name: "addAnimal",
     component: () => import("@/views/animals/AddAnimal.vue")
   },
-  // Sponsors
+  /** SPONSORS **/
   {
     path: "/admin/sponsors",
     name: "listSponsors",
     component: () => import("@/views/sponsors/ListSponsors.vue")
+  },
+  {
+    path: "/admin/sponsors/:sponsorId",
+    name: "editSponsor",
+    component: () => import("@/views/sponsors/EditSponsor.vue")
+  },
+  {
+    path: "/admin/sponsors/add",
+    name: "addSponsor",
+    component: () => import("@/views/sponsors/AddSponsor.vue")
   },
   {
     path: "/profile",
