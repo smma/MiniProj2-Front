@@ -28,10 +28,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       userService.getUsers(rootState.auth.token).then(
         res => {
-          commit(SET_USERS, res.body);
+          const users = res.body || res;
+          commit(SET_USERS, Array.isArray(users) ? users : []);
           resolve(res);
         },
-        err => reject(err)
+        err => {
+          commit(SET_MESSAGE, err.message);
+          reject(err);
+        }
       );
     });
   },

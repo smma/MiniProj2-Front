@@ -30,26 +30,30 @@
           <table class="table table-striped">
             <thead class="thead-dark">
               <tr>
-                <th scope="col">
+                <th scope="col" class="text-center">
                   NOME
                   <i
-                    class="fas fa-arrow-up"
+                    class="fas fa-arrow-up sort-arrow"
                     v-if="sortType === 1"
                     @click="sort()"
                   ></i>
-                  <i class="fas fa-arrow-down" v-else @click="sort()"></i>
+                  <i
+                    class="fas fa-arrow-down sort-arrow"
+                    v-else
+                    @click="sort()"
+                  ></i>
                 </th>
-                <th scope="col">NÍVEL</th>
-                <th scope="col">PONTOS</th>
-                <th scope="col">AÇÕES</th>
+                <th scope="col" class="text-center">NÍVEL</th>
+                <th scope="col" class="text-center">PONTOS</th>
+                <th scope="col" class="text-center">AÇÕES</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="quiz of quizzes" :key="quiz._id">
-                <td class="pt-4">{{ quiz.name }}</td>
-                <td class="pt-4">{{ quiz.level }}</td>
-                <td class="pt-4">{{ quiz.points }}</td>
-                <td>
+                <td class="pt-4 text-center">{{ quiz.name }}</td>
+                <td class="pt-4 text-center">{{ quiz.level }}</td>
+                <td class="pt-4 text-center">{{ quiz.points }}</td>
+                <td class="text-center">
                   <router-link
                     :to="{ name: 'editQuiz', params: { quizId: quiz._id } }"
                     tag="button"
@@ -165,3 +169,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.sort-arrow {
+  cursor: pointer;
+}
+</style>

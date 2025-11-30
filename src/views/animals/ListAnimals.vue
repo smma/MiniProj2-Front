@@ -31,26 +31,30 @@
           <table class="table table-striped">
             <thead class="thead-dark">
               <tr>
-                <th scope="col">
+                <th scope="col" class="text-center">
                   NOME
                   <i
-                    class="fas fa-arrow-up"
+                    class="fas fa-arrow-up sort-arrow"
                     v-if="sortType === 1"
                     @click="sort()"
                   ></i>
-                  <i class="fas fa-arrow-down" v-else @click="sort()"></i>
+                  <i
+                    class="fas fa-arrow-down sort-arrow"
+                    v-else
+                    @click="sort()"
+                  ></i>
                 </th>
-                <th scope="col">GRUPO</th>
-                <th scope="col">NÍVEL</th>
-                <th scope="col">AÇÕES</th>
+                <th scope="col" class="text-center">GRUPO</th>
+                <th scope="col" class="text-center">NÍVEL</th>
+                <th scope="col" class="text-center">AÇÕES</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="animal of animals" :key="animal._id">
-                <td class="pt-4">{{ animal.name }}</td>
-                <td class="pt-4">{{ animal.group }}</td>
-                <td class="pt-4">{{ animal.level }}</td>
-                <td>
+                <td class="pt-4 text-center">{{ animal.name }}</td>
+                <td class="pt-4 text-center">{{ animal.group }}</td>
+                <td class="pt-4 text-center">{{ animal.level }}</td>
+                <td class="text-center">
                   <router-link
                     :to="{
                       name: 'editAnimal',
@@ -176,3 +180,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.sort-arrow {
+  cursor: pointer;
+}
+</style>

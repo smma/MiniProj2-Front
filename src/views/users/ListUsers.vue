@@ -31,32 +31,38 @@
           <table class="table table-striped">
             <thead class="thead-dark">
               <tr>
-                <th scope="col">
+                <th scope="col" class="text-center">
                   NOME
                   <i
-                    class="fas fa-arrow-up"
+                    class="fas fa-arrow-up sort-arrow"
                     v-if="sortType === 1"
                     @click="sort()"
                   ></i>
-                  <i class="fas fa-arrow-down" v-else @click="sort()"></i>
+                  <i
+                    class="fas fa-arrow-down sort-arrow"
+                    v-else
+                    @click="sort()"
+                  ></i>
                 </th>
-                <th scope="col">TIPO</th>
-                <th scope="col">DATA DE CRIAÇÃO</th>
-                <th scope="col">AÇÕES</th>
+                <th scope="col" class="text-center">TIPO</th>
+                <th scope="col" class="text-center">DATA DE CRIAÇÃO</th>
+                <th scope="col" class="text-center">AÇÕES</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="user of users" :key="user._id">
-                <td class="pt-4">{{ user.name }}</td>
-                <td class="pt-4">
+                <td class="pt-4 text-center">{{ user.name }}</td>
+                <td class="pt-4 text-center">
                   {{
                     user.type === "admin"
                       ? "Administrador"
                       : "Utilizador normal"
                   }}
                 </td>
-                <td class="pt-4">{{ formatDate(user.registration_date) }}</td>
-                <td>
+                <td class="pt-4 text-center">
+                  {{ formatDate(user.registration_date) }}
+                </td>
+                <td class="text-center">
                   <router-link
                     :to="{ name: 'editUser', params: { userId: user._id } }"
                     tag="button"
@@ -203,3 +209,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.sort-arrow {
+  cursor: pointer;
+}
+</style>

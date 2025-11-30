@@ -20,20 +20,20 @@
           <table class="table table-striped">
             <thead class="thead-dark">
               <tr>
-                <th scope="col">POSIÇÃO</th>
-                <th scope="col">NOME</th>
-                <th scope="col">NÍVEL</th>
-                <th scope="col">PONTOS</th>
+                <th scope="col" class="text-center">POSIÇÃO</th>
+                <th scope="col" class="text-center">NOME</th>
+                <th scope="col" class="text-center">NÍVEL</th>
+                <th scope="col" class="text-center">PONTOS</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(user, index) in users" :key="user.name">
-                <td class="pt-4">{{ index + 1 }}º</td>
-                <td class="pt-4">{{ user.name }}</td>
-                <td class="pt-4">
+                <td class="pt-4 text-center">{{ index + 1 }}º</td>
+                <td class="pt-4 text-center">{{ user.name }}</td>
+                <td class="pt-4 text-center">
                   {{ getUserLevelByPoints(user.gamification.points).name }}
                 </td>
-                <td class="pt-4">{{ user.gamification.points }}</td>
+                <td class="pt-4 text-center">{{ user.gamification.points }}</td>
               </tr>
             </tbody>
           </table>

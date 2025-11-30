@@ -1,17 +1,17 @@
 <template>
   <section class="page-section">
     <b-container>
-      <HeaderPage title="Gestão de Patrocinadores" />
+      <HeaderPage title="Gestão de Especialistas" />
       <!--MENU DE TOPO-->
       <b-row class="mb-4">
         <b-col cols="1"></b-col>
         <b-col>
           <router-link
-            :to="{ name: 'addSponsor' }"
+            :to="{ name: 'addExpert' }"
             tag="button"
             class="btn btn-outline-success mr-2 mt-2"
           >
-            <i class="fas fa-plus-square"></i> ADICIONAR PATROCINADOR
+            <i class="fas fa-plus-square"></i> ADICIONAR ESPECIALISTA
           </router-link>
           <router-link
             :to="{ name: 'admin' }"
@@ -43,37 +43,39 @@
                     @click="sort()"
                   ></i>
                 </th>
-                <th scope="col" class="w-20 text-center">NÍVEL</th>
-                <th scope="col" class="w-20 text-center">CONTRIBUIÇÕES</th>
+                <th scope="col" class="w-20 text-center">PROFISSÃO</th>
+                <th scope="col" class="w-20 text-center">
+                  ANOS DE EXPERIÊNCIA
+                </th>
                 <th scope="col" class="w-40 text-center">AÇÕES</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="sponsor of sponsors" :key="sponsor._id">
-                <td class="pt-4 text-center">{{ sponsor.name }}</td>
-                <td class="pt-4 text-center">{{ sponsor.level }}</td>
+              <tr v-for="expert of experts" :key="expert._id">
+                <td class="pt-4 text-center">{{ expert.name }}</td>
+                <td class="pt-4 text-center">{{ expert.profession }}</td>
                 <td class="pt-4 text-center">
-                  {{ sponsor.contributions || "-" }}
+                  {{ expert.yearsOfExperience || "-" }}
                 </td>
                 <td class="text-center">
                   <router-link
                     :to="{
-                      name: 'editSponsor',
-                      params: { sponsorId: sponsor._id }
+                      name: 'editExpert',
+                      params: { expertId: expert._id }
                     }"
                     tag="button"
                     class="btn btn-outline-success mr-2"
                     ><i class="fas fa-edit"></i> EDITAR</router-link
                   >
                   <button
-                    @click="viewSponsor(sponsor._id)"
+                    @click="viewExpert(expert._id)"
                     type="button"
                     class="btn btn-outline-warning mr-2"
                   >
                     <i class="fas fa-search"></i> VER
                   </button>
                   <button
-                    @click="removeSponsor(sponsor._id)"
+                    @click="removeExpert(expert._id)"
                     type="button"
                     class="btn btn-outline-danger mr-2"
                   >
@@ -91,32 +93,29 @@
 </template>
 
 <script>
-import {
-  FETCH_SPONSORS,
-  REMOVE_SPONSOR
-} from "@/store/sponsors/sponsor.constants";
+import { FETCH_EXPERTS, REMOVE_EXPERT } from "@/store/experts/expert.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "ListSponsors",
+  name: "ListExperts",
   components: {
     HeaderPage
   },
   data: function() {
     return {
-      sponsors: [],
+      experts: [],
       sortType: 1
     };
   },
   computed: {
-    ...mapGetters("sponsor", ["getSponsors", "getMessage"])
+    ...mapGetters("expert", ["getExperts", "getMessage"])
   },
   methods: {
-    fetchSponsors() {
-      this.$store.dispatch(`sponsor/${FETCH_SPONSORS}`).then(
+    fetchExperts() {
+      this.$store.dispatch(`expert/${FETCH_EXPERTS}`).then(
         () => {
-          this.sponsors = this.getSponsors;
+          this.experts = this.getExperts;
         },
         err => {
           this.$alert(`${err.message}`, "Erro", "error");
@@ -124,7 +123,7 @@ export default {
       );
     },
     sort() {
-      this.sponsors.sort(this.compareNames);
+      this.experts.sort(this.compareNames);
       this.sortType *= -1;
     },
     compareNames(u1, u2) {
@@ -132,32 +131,37 @@ export default {
       else if (u1.name < u2.name) return -1 * this.sortType;
       else return 0;
     },
-    viewSponsor(id) {
-      const sponsor = this.sponsors.find(sponsor => sponsor._id === id);
+    viewExpert(id) {
+      const expert = this.experts.find(expert => expert._id === id);
       this.$fire({
-        title: sponsor.name,
-        html: this.generateTemplate(sponsor)
+        title: expert.name,
+        html: this.generateTemplate(expert)
       });
     },
-    generateTemplate(sponsor) {
+    generateTemplate(expert) {
       let response = `
-          <p><b>Nome:</b> ${sponsor.name}</p>
-          <p><b>Nível:</b> ${sponsor.level}</p>
-          <p><b>Contribuições:</b> ${sponsor.contributions}</p>`;
+          <p><b>Nome:</b> ${expert.name}</p>
+          <p><b>Profissão:</b> ${expert.profession}</p>
+          <p><b>Anos de Experiência:</b> ${expert.yearsOfExperience}</p>`;
       return response;
     },
-    removeSponsor(id) {
+    removeExpert(id) {
       this.$confirm(
         "Se sim, clique em OK",
-        "Deseja mesmo remover o patrocinador?",
+        "Deseja mesmo remover o especialista?",
         "warning",
         { confirmButtonText: "OK", cancelButtonText: "Cancelar" }
       ).then(
         () => {
-          this.$store.dispatch(`sponsor/${REMOVE_SPONSOR}`, id).then(() => {
-            this.$alert(this.getMessage, "Patrocinador removido!", "success");
-            this.fetchSponsors();
-          });
+          this.$store.dispatch(`expert/${REMOVE_EXPERT}`, id).then(
+            () => {
+              this.$alert(this.getMessage, "Especialista removido!", "success");
+              this.fetchExperts();
+            },
+            err => {
+              this.$alert(`${err.message}`, "Erro", "error");
+            }
+          );
         },
         () => {
           this.$alert("Remoção cancelada!", "Informação", "info");
@@ -166,7 +170,7 @@ export default {
     }
   },
   created() {
-    this.fetchSponsors();
+    this.fetchExperts();
   }
 };
 </script>
